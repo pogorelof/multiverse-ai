@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <style>
+        body {
+            margin: 0;
+            background: radial-gradient(circle, #000428, #004e92);
+        }
+
+        .portal {
+            width: 200px;
+            height: 200px;
+            border: 4px solid transparent;
+            border-top: 4px solid cyan;
+        {#border-right: 4px solid cyan;#} border-radius: 50%;
+            animation: spin 2s linear infinite;
+            box-shadow: 0 0 30px cyan, 0 0 50px magenta;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+    </style>
+
+    <p class="text-5xl">Внесите изменение в ход мировой истории</p>
+    <p class="text-3xl text-gray-300 font-light text-right">И наблюдайте за эффектом <span
+            class="text-blue-600">бабочки</span></p>
+
+    <form id="travel" class="w-fit mx-auto mt-5">
+        <input type="text" placeholder="Год путешествия" name="year" class="p-3 rounded text-black outline-none"
+               required>
+        <input type="text" placeholder="Событие которое вы меняете" name="event"
+               class="p-3 rounded w-96 text-black outline-none" required>
+        <button class="bg-blue-600 text-white font-medium hover:bg-blue-700 p-3 rounded-xl ml-5">
+            Изменить прошлое
+        </button>
+    </form>
+
+    <div id="content" class="hidden m-5">
+        <div class="text-center">
+            <p id="content-year" class="text-3xl"></p>
+            <p id="content-event" class="text-xl"></p>
+        </div>
+        <div class="grid grid-cols-2 mx-auto w-10/12 gap-10 mt-5">
+            <div class="space-y-16 flex flex-col items-end justify-around">
+                <div class="rounded-lg overflow-hidden w-fit">
+                    <img id="content-photo-1" src=""
+                         alt="" class="" width="500" height="500">
+                </div>
+                <div class="rounded-lg overflow-hidden w-fit ">
+                    <img id="content-photo-2" src=""
+                         alt="" class="" width="500" height="500">
+                </div>
+            </div>
+
+            <div id="content-text" class="text-justify text-lg">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="portal" class="hidden space-y-3">
+        <div class="portal mx-auto mt-28"></div>
+        <p class="text-center text-2xl text-gray-100">Путешествие во времени...</p>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#travel').on('submit', function (e) {
+                e.preventDefault()
+
+                const formData = $(this).serialize()
+                $.ajax({
+                    url: '{% url 'travel' %}',
+                    method: 'GET',
+                    data: formData,
+                    success: function (r) {
+                        $('#portal').hide()
+                        $('#content').show()
+
+                        $('#content-year').html(r.year)
+                        $('#content-event').html(r.event)
+                        $('#content-text').html(r.text)
+
+                        $('#content-photo-1').attr('src', r.photo_1)
+                        $('#content-photo-2').attr('src', r.photo_2)
+                    },
+                    beforeSend: function () {
+                        $('#content').hide()
+                        $('#portal').show()
+                    },
+                })
+            })
+        })
+
+
+        // Для контроля анимации можно добавить управление скоростью через JS.
+        const portal = document.querySelector('.portal');
+        let speed = 2; // Скорость вращения
+
+        // Изменение скорости при клике
+        portal.addEventListener('click', () => {
+            speed = speed === 2 ? 0.5 : 2; // Переключение между скоростями
+            portal.style.animationDuration = `${speed}s`;
+        });
+    </script>
+{% endblock %}
