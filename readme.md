@@ -12,3 +12,11 @@ pip install django django-environ openai
 ````
 4. Run server with ```python manage.py runserver```
 5. Go to ```localhost:8000```
+
+## Example of Work
+### Main page
+![Main page](images/index.png)
+### Loading
+![Loading](images/loading.png)
+### Result
+![Result](images/result.png)
